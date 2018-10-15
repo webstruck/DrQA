@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script>
+        function hit(question) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", '/answer', true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+                console.log(xhr.status);
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var json = JSON.parse(xhr.responseText);
+                    var context = document.getElementById("context");
+                    context.value = json.context[0].text;
+                    context.focus();
+                    context.setSelectionRange(json.context[0].start, json.context[0].end);
+                    var ans = document.getElementById("answer");
+                    ans.innerHTML = "Answer: " + json.span[0];
+                }
+            };
+            var params = JSON.stringify({ "question": question });
+            xhr.send(params);
+            console.log("sent");
+        }
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="col">
+                <h4>DrQA for Open Domain QA</h4>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-lg">
+                <div class="input-group">
+                    <input type="text" class="form-control" id='question' rows="2" placeholder='type your question here'></input>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg">
+                <div class="input-group">
+                    <button class="btn btn-primary" id='GetAnswer'>Get Answer</button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg">
+                <div class="input-group">
+                    <textarea class="form-control" id='context' rows="15" placeholder='document with answer appears here'></textarea>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg">
+                <div class="input-group">
+                    <p id='answer'>your answer appears here</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var button = document.getElementById("GetAnswer");
+        button.onclick = function () {
+            var con = document.getElementById("context");
+            con.value = "";
+            var a = document.getElementById("answer");
+            a.innerHTML = "";
+            var ques = document.getElementById("question");
+            console.log("hitting");
+            hit(ques.value);
+       };
+    </script>
+</body>
+
+</html>
